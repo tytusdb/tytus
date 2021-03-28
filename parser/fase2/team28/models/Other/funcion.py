@@ -104,7 +104,7 @@ class Funcion(Instruction):
                         if value.value[0]  == "'" or value.value[0]  == "\"":
                             value.value = f"\"{value.value}\""
                         else:
-                            value.value = f"\"\'{value.value}\'\""
+                            value.value = f"\'{value.value}\'"
                             
                 ThreeAddressCode().addCode(f"Stack[{var.position}] = {value.value}")
 

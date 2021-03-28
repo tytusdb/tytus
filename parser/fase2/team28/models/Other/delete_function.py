@@ -27,3 +27,6 @@ class DeleteFunction(Instruction):
     def compile(self, environment):
         temp = ThreeAddressCode().newTemp()
         ThreeAddressCode().addCode(f"{temp} = '{self._tac}'")
+        temp1 = ThreeAddressCode().newTemp()
+        ThreeAddressCode().addCode(f"{temp1} = parse({temp})")
+        return

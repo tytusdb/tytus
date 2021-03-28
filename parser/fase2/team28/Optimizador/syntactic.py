@@ -8,7 +8,7 @@ precedence = (
     ('left', 'LEFT_PARENTHESIS',
      'RIGHT_PARENTHESIS', 'COLON', 'NOT_EQUAL'),  # Level 6
     ('left', 'PLUS', 'REST'),  # Level 7
-    ('left', 'ASTERISK', 'DIVISION', 'MODULAR', 'BITWISE_SHIFT_RIGHT',
+    ('left', 'ASTERISK', 'DIVISION', 'DIVISION_DOUBLE', 'MODULAR', 'BITWISE_SHIFT_RIGHT',
      'BITWISE_SHIFT_LEFT', 'BITWISE_AND', 'BITWISE_OR'),  # Level 8
     ('left', 'EXPONENT',  'BITWISE_XOR'),  # Level 9
     ('right', 'UPLUS', 'UREST'),  # Level 10
@@ -65,6 +65,9 @@ def p_definition_instr(p):
     if len(p) == 4:
         if p.slice[2].type == "EQUALS":
             p[0] = AsignacionID(p[1], p[3])
+    elif len(p) == 7:
+        valor = f'{p[1]}{p[2]}{str(p[3])}{p[4]}'
+        p[0] = AsignacionID(valor, p[6])
 
 
 def p_list_expression(p):
@@ -120,6 +123,7 @@ def p_expression(p):
                   | EXPRESSION EXPONENT EXPRESSION
                   | EXPRESSION MODULAR EXPRESSION
                   | EXPRESSION DOT EXPRESSION 
+                  | EXPRESSION DIVISION_DOUBLE EXPRESSION 
                   | REST EXPRESSION %prec UREST
                   | PLUS EXPRESSION %prec UPLUS
                   | EXPRESSION BITWISE_SHIFT_RIGHT EXPRESSION
@@ -141,6 +145,9 @@ def p_expression(p):
             p[0] = p[2]
         else:
             p[0] = ArithmeticBinaryOperation(p[1], p[3], p[2])
+    elif len(p) == 5:
+        valor = f'{p[1]}{p[2]}{str(p[3])}{p[4]}'
+        p[0] = valor
     elif len(p) == 2:
         p[0] = p[1]
 

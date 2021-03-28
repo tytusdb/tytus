@@ -277,6 +277,10 @@ class Update(Instruction):
                     if pk_col_name == []:  # NO HAY LLAVE PRIMARIA
                         pk_list = table_result.index.to_list()
                         print(pk_list)
+                        lista_aux = pk_list
+                        pk_list = []
+                        for _, value in enumerate(lista_aux):
+                            pk_list.append([f'{str(value[0])}|'])
                         for pk in pk_list:
                             if type(pk) is list:
                                 DataController().update(self.table, d, pk, self.line, self.column)
@@ -290,6 +294,10 @@ class Update(Instruction):
 
                         pk_list = table_result[list_pks].values.tolist()
                         print(pk_list)
+                        lista_aux = pk_list
+                        pk_list = []
+                        for _, value in enumerate(lista_aux):
+                            pk_list.append([f'{str(value[0])}|'])
                         for pk in pk_list:
                             if type(pk) is list:
                                 DataController().update(self.table, d, pk, self.line, self.column)
@@ -435,6 +443,10 @@ class Delete(Instruction):
                     if pk_col_name == []:  # NO HAY LLAVE PRIMARIA
                         pk_list = table_result.index.to_list()
                         print(pk_list)
+                        lista_aux = pk_list
+                        pk_list = []
+                        for _, value in enumerate(lista_aux):
+                            pk_list.append([f'{str(value[0])}|'])
                         for pk in pk_list:
                             DataController().delete(self.table, pk, self.line, self.column)
                     else:
@@ -445,6 +457,10 @@ class Delete(Instruction):
 
                         pk_list = table_result[list_pks].values.tolist()
                         print(pk_list)
+                        lista_aux = pk_list
+                        pk_list = []
+                        for _, value in enumerate(lista_aux):
+                            pk_list.append([f'{str(value[0])}|'])
                         for pk in pk_list:
                             DataController().delete(self.table, pk, self.line, self.column)
 

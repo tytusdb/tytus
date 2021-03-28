@@ -611,14 +611,15 @@ class ObjectReference(Instruction):
         ThreeAddressCode().addCode(f"{temporal} = Stack[{position}]")
         return PrimitiveData(None, temporal, 0, 0)
 
-def putVarValues(entry:str, temps_array:[], environment: Ambito):
-    entry = entry.replace("))", ")")
+def putVarValues(entry:str, temps_array:list, environment: Ambito):
+    # entry = entry.replace("))", ")")
     variables = environment.getAllVarIds()
     temp = None
     entry_lower = entry
+    diccionario = {}
+    hay_variables = False
     for variable in variables:
-        print(f"variable: {variable}")
-        # variable = f" {variable} "
+
         if variable in entry_lower:
             first_letter = entry_lower.index(variable)
             next_last_letter = first_letter + len(variable)
@@ -629,28 +630,32 @@ def putVarValues(entry:str, temps_array:[], environment: Ambito):
             if next_last_letter < len(entry_lower):
                 if entry_lower[next_last_letter].isalpha():
                     continue
-
-            split = entry_lower.split(variable)
+            hay_variables = True
+            print(f"variable: {variable}")
             newValue = environment.getVar(variable)
-            temp = ThreeAddressCode().newTemp()
-            newString = ''
             #OBTENIENDO VALOR Y PASARLO A UN TEMPORAL
+            temp = ThreeAddressCode().newTemp()
             ThreeAddressCode().addCode(f"{temp} = Stack[{newValue.position}]")
-            temp_ant = ''
-            for idx, val in enumerate(split):
+            diccionario[variable] = temp
 
-                if (idx < len(split) - 1):
-                    temp_ant = temp
-                    temp = ThreeAddressCode().newTemp()
-                    ThreeAddressCode().addCode(f"{temp} = \"{val}\" + str({temp_ant})")
-                    newString += f"{val}{newValue.value}"
-       
+    if hay_variables:
+        contador_temporales = ThreeAddressCode().tempCounter
+        for variable in variables:
+            cambiarVariable(variable, entry_lower,diccionario)
+        numbers = int(temp[1:])
+        temp = f"t{numbers+1}"
+        for r in range(contador_temporales, ThreeAddressCode().tempCounter-1):
             temp_ant = temp
             temp = ThreeAddressCode().newTemp()
-            ThreeAddressCode().addCode(f"{temp} = {temp_ant} + \";\"")
-            newString += ';'
-
-            print("valor nuevo string: ", newString)
+            if temp_ant is None:
+                ThreeAddressCode().addCode(f"{temp} = t{r} + t{r+1}")
+            else:
+                ThreeAddressCode().addCode(f"{temp} = {temp_ant} + t{r+1}")
+                
+        if temp is None:
+            dif =  ThreeAddressCode().tempCounter - contador_temporales
+            if dif > 0:
+                temp = f"t{contador_temporales + 1}"
 
     if len(temps_array) > 0:
         funciones = Procedures().getProceduresIDs() 
@@ -677,18 +682,8 @@ def putVarValues(entry:str, temps_array:[], environment: Ambito):
                     if dif > 0:
                         temp = f"t{contador_temporales + 1}"
 
-                # temp_ant = temp
-                # temp = ThreeAddressCode().newTemp()
-                # ThreeAddressCode().addCode(f"{temp} = {temp_ant} + \";\"")
-                # newString +=  f"{val}"
-                # entry_lower = newString.lower()
-
-                # print("valor nuevo string: ", newString)
-
-
     if temp is None: return entry
     else: return temp
-
 
 def hacerUnSoloCambio(func, entry_lower, temps_array, contador_funciones):
     newString = '' #viendo nada mas como queda armado
@@ -738,3 +733,48 @@ def hacerUnSoloCambio(func, entry_lower, temps_array, contador_funciones):
 
     return contador_funciones
     
+def cambiarVariable(func, entry_lower, diccionario:dict):
+    newString = '' #viendo nada mas como queda armado
+    if func in entry_lower:
+        #separando string
+        split = entry_lower.split(func, 1)
+        temp = None
+        try:
+            temp = diccionario[func]
+            newValue = temp
+        except:
+            return
+        temp_ant = ''
+        for idx, val in enumerate(split):
+            #Quitando parametros
+            if (idx < len(split) - 1):
+                temp_ant = temp
+                temp = ThreeAddressCode().newTemp()
+                keys = diccionario.keys()
+                split2 = []
+                for key in keys:
+                    if key in val:
+                        split2 = val.split(key)
+                        val = split2[(len(split2) - 1)]
+                # newValue = temp
+                #METIENDO COMILLAS
+                ThreeAddressCode().addCode(f"{temp} = \"{val}\" + str({temp_ant})")
+
+            newString += f"{val}"
+        if len(split) > 1:
+            print("val", val)
+            contiene_reemplazo = True
+            funciones = diccionario.keys()
+
+            for func3 in funciones:
+                if func3 in val:
+                    contiene_reemplazo = False
+                    break
+            if contiene_reemplazo:
+                temp = ThreeAddressCode().newTemp()
+                ThreeAddressCode().addCode(f"{temp} = \"{val}\"")
+            return cambiarVariable(func, val, diccionario)
+
+    return
+    
+

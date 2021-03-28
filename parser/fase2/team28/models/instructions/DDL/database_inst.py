@@ -181,6 +181,9 @@ class UseDatabase(Instruction):
         temp = ThreeAddressCode().newTemp()
         ThreeAddressCode().addCode(f"{temp} = '{self._tac};'")
         SymbolTable().useDatabase = self._dbActual
+        temp1 = ThreeAddressCode().newTemp()
+        ThreeAddressCode().addCode(f"{temp1} = parse({temp})")
+    
 
     def process(self, instrucction):
         typeChecker = TypeChecker()

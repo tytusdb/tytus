@@ -739,16 +739,16 @@ def p_call_functions_or_procedure(p):
             p[0] = Funcion(p[2], p[4], [], None, False, True, noLine, noColumn)
             string = ''
             for index, var in enumerate(p[4]):
-                if index > 0: string += f', {var}'
-                else: string += f'{var}'
+                if index > 0: string += f', {var._tac}'
+                else: string += f'{var._tac}'
             p[0]._tac = f"{p[2]}({string})"   
     else:
         if len(p) == 5: #Primera produccion
             p[0] = Funcion(p[1], p[3], [], None, False, True, noLine, noColumn)
             string = ''
-            for index, var in enumerate(p[4]):
-                if index > 0: string += f', {var}'
-                else: string += f'{var}'
+            for index, var in enumerate(p[3]):
+                if index > 0: string += f', {var._tac}'
+                else: string += f'{var._tac}'
             p[0]._tac = f"{p[1]}({string})" 
         else:           #Segunda produccion
             p[0] = Funcion(p[1], [], [], None, False, True, noLine, noColumn)

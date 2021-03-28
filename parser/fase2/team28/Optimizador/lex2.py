@@ -53,6 +53,7 @@ tokens = [
     'DIVISION',
     'EXPONENT',
     'MODULAR',
+    'DIVISION_DOUBLE',
     # Assignment Operators
     'EQUALS_EQUALS',
     'EQUALS',
@@ -106,6 +107,7 @@ t_BITWISE_SHIFT_RIGHT = r'\>\>'
 t_LEFT_CORCH = r'\['
 t_RIGHT_CORCH = r'\]'
 t_ARROBA = r'\@'
+t_DIVISION_DOUBLE = r'\/\/'
 # Token recognition using patterns
 
 
